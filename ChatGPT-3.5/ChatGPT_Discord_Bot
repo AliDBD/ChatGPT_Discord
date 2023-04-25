@@ -1,0 +1,41 @@
+#coding=utf-8
+import os
+import discord
+import openai
+
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+
+client = discord.Client(intents=intents)
+openai.api_key = "Your ChatGPT Key!"
+
+@client.event
+async def on_ready():
+    print(f'{client.user} has connected to Discord!')
+
+@client.event
+async def on_message(message):
+    #print(f"收到消息: {message.content}，来自: {message.author}，在: {message.channel}")
+    # 如果消息来自机器人，直接忽略
+    if message.author == client.user:
+        return
+    ## 如果消息以 "/chat" 开头，我们将与 ChatGPT 交谈
+    if message.content.startswith('/chat'):
+        print("收到消息：",message.content)
+        #user_question = message.content[5:].strip()
+        prompt = message.content[len('/chat'):].strip()
+        response = openai.Completion.create(
+            engine="text-davinci-002",  #目前只有 "text-davinci-002"，可能会有更新
+            prompt=prompt,
+            max_tokens=150,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+        await message.channel.send(response)
+        reply = response.choices[0].text.strip()
+        await message.channel.send(reply)
+
+client.run("Discord 机器人令牌！")  # Discord 机器人令牌
+
