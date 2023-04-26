@@ -38,6 +38,4 @@ async def on_message(message):
         await message.channel.send(reply)
 
 client.run("Discord 机器人令牌！")  # Discord 机器人令牌，用于链接机器人
-##
-print()
 
